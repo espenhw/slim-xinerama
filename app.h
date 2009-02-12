@@ -85,6 +85,7 @@ private:
     char* DispName;
 
     Cfg *cfg;
+    char* cfgfile;
 
     Pixmap BackgroundPixmap;
 

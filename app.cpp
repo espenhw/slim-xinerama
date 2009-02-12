@@ -141,10 +141,11 @@ App::App(int argc, char** argv){
     force_nodaemon = false;
     firstlogin = true;
     Dpy = NULL;
+    cfgfile = (char *)CFGFILE;
 
     // Parse command line
     // Note: we force a option for nodaemon switch to handle "-nodaemon"
-    while((tmp = getopt(argc, argv, "vhp:n:d?")) != EOF) {
+    while((tmp = getopt(argc, argv, "vhf:p:n:d?")) != EOF) {
         switch (tmp) {
         case 'p':    // Test theme
             testtheme = optarg;
@@ -161,6 +162,9 @@ App::App(int argc, char** argv){
             daemonmode = false;
             force_nodaemon = true;
             break;
+        case 'f':    // Config file
+            cfgfile = optarg;
+            break;
         case 'v':    // Version
             std::cout << APPNAME << " version " << VERSION << endl;
             exit(OK_EXIT);
@@ -173,6 +177,7 @@ App::App(int argc, char** argv){
             << "    -d: daemon mode" << endl
             << "    -nodaemon: no-daemon mode" << endl
             << "    -v: show version" << endl
+            << "    -f /path/to/config: config file" << endl
             << "    -p /path/to/theme/dir: preview theme" << endl;
             exit(OK_EXIT);
             break;
@@ -201,7 +206,7 @@ void App::Run() {
 
     // Read configuration and theme
     cfg = new Cfg;
-    cfg->readConf(CFGFILE);
+    cfg->readConf(cfgfile);
     string themebase = "";
     string themefile = "";
     string themedir = "";

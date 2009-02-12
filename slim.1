@@ -24,6 +24,10 @@ display a preview of the theme. An already running X11 session
 is required for theme preview.
 .TP
 .B
+\fB-f\fP /path/to/config
+use the specified config file.
+.TP
+.B
 \fB-h\fP
 display a brief help message
 .TP
@@ -43,8 +47,9 @@ preview of the default theme
 Please refer to documentation of your Operating System to make \fBslim\fP
 automatically startup after the system boots.
 .SH CONFIGURATION
-Global configuration is stored in the /etc/slim.conf file. See the comments
-inside the file for a detailed explanation of the \fIoptions\fP.
+Global configuration is stored in the /etc/slim.conf file, or the file
+specified with the \fB-f\fP option. See the comments inside the file
+for a detailed explanation of the \fIoptions\fP.
 .SH USAGE AND SPECIAL USERNAMES
 When started, \fBslim\fP will show a login panel; enter the username and
 password of the user you want to login as.
