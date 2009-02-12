@@ -13,6 +13,7 @@
 #define _APP_H_
 
 #include <X11/Xlib.h>
+#include <X11/extensions/Xinerama.h>
 #include <signal.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -39,6 +40,8 @@ public:
     // Lock functions
     void GetLock();
     void RemoveLock();
+
+    friend class Panel;
 
 private:
     void Login();
@@ -69,10 +72,16 @@ private:
     int ServerTimeout(int timeout, char *string);
     int WaitForServer();
 
+    int ScreenLeft();
+    int ScreenTop();
+    int ScreenWidth();
+    int ScreenHeight();
+
     // Private data
     Window Root;
     Display* Dpy;
     int Scr;
+    XineramaScreenInfo* screenInfo;
     Panel* LoginPanel;
     int ServerPID;
     const char* DisplayName;

@@ -11,8 +11,11 @@
 
 #include <sstream>
 #include "panel.h"
+#include "app.h"
 
 using namespace std;
+
+extern App* LoginApp;
 
 Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
              const string& themedir) {
@@ -105,28 +108,27 @@ Panel::Panel(Display* dpy, int scr, Window root, Cfg* config,
             }
         }
     }
+
     if (bgstyle == "stretch") {
-        bg->Resize(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+        bg->Resize(LoginApp->ScreenWidth(), LoginApp->ScreenHeight());
     } else if (bgstyle == "tile") {
-        bg->Tile(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+        bg->Tile(LoginApp->ScreenWidth(), LoginApp->ScreenHeight());
     } else if (bgstyle == "center") {
         string hexvalue = cfg->getOption("background_color");
         hexvalue = hexvalue.substr(1,6);
-        bg->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)),
-                   XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+        bg->Center(LoginApp->ScreenWidth(), LoginApp->ScreenHeight(),
                    hexvalue.c_str());
     } else { // plain color or error
         string hexvalue = cfg->getOption("background_color");
         hexvalue = hexvalue.substr(1,6);
-        bg->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)),
-                   XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+        bg->Center(LoginApp->ScreenWidth(), LoginApp->ScreenHeight(),
                    hexvalue.c_str());
     }
 
     string cfgX = cfg->getOption("input_panel_x");
     string cfgY = cfg->getOption("input_panel_y");
-    X = Cfg::absolutepos(cfgX, XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), image->Width());
-    Y = Cfg::absolutepos(cfgY, XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)), image->Height());
+    X = Cfg::absolutepos(cfgX, LoginApp->ScreenWidth(), image->Width());
+    Y = Cfg::absolutepos(cfgY, LoginApp->ScreenHeight(), image->Height());
 
     // Merge image into background
     image->Merge(bg, X, Y);
@@ -210,8 +212,8 @@ void Panel::Message(const string& text) {
     int shadowYOffset =
         Cfg::string2int(cfg->getOption("msg_shadow_yoffset").c_str());
 
-    int msg_x = Cfg::absolutepos(cfgX, XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.width);
-    int msg_y = Cfg::absolutepos(cfgY, XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.height);
+    int msg_x = Cfg::absolutepos(cfgX, LoginApp->ScreenWidth(), extents.width);
+    int msg_y = Cfg::absolutepos(cfgY, LoginApp->ScreenHeight(), extents.height);
 
     SlimDrawString8 (draw, &msgcolor, msgfont, msg_x, msg_y,
                      text,
@@ -585,8 +587,8 @@ void Panel::ShowSession() {
                     currsession.length(), &extents);
     msg_x = cfg->getOption("session_x");
     msg_y = cfg->getOption("session_y");
-    int x = Cfg::absolutepos(msg_x, XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.width);
-    int y = Cfg::absolutepos(msg_y, XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)), extents.height);
+    int x = Cfg::absolutepos(msg_x, LoginApp->ScreenWidth(), extents.width);
+    int y = Cfg::absolutepos(msg_y, LoginApp->ScreenHeight(), extents.height);
     int shadowXOffset =
         Cfg::string2int(cfg->getOption("session_shadow_xoffset").c_str());
     int shadowYOffset =

@@ -6,7 +6,7 @@
 CXX=/usr/bin/g++
 CC=/usr/bin/gcc
 CFLAGS=-I. -I/usr/local/include/freetype2 -I/usr/local/include/freetype2/config -I/usr/local/include/libpng -I/usr/local/include -I/usr/include
-LDFLAGS= -L/usr/local/lib -lXft -lX11 -lfreetype -lXrender -lfontconfig -lpng -lz -lm -lcrypt -lXmu -lpng -ljpeg
+LDFLAGS= -L/usr/local/lib -lXft -lX11 -lXinerama -lfreetype -lXrender -lfontconfig -lpng -lz -lm -lcrypt -lXmu -lpng -ljpeg
 CUSTOM=-DNEEDS_BASENAME
 .ifdef(USE_PAM)
   LDFLAGS+= -lpam

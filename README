@@ -15,6 +15,7 @@ INTRODUCTION
     - XFT / freetype support
     - Double or single (GDM-style) inputbox support
     - Automake-based build procedure
+    - Xinerama support
 
 INSTALLATION
     see the INSTALL file
@@ -40,8 +41,9 @@ USAGE
     is to take a screenshot if the 'import' program is available.
     
 CONFIGURATION
-    /usr/etc/slim.conf is the main configuration file.
-    Options are explained in the file itself
+    /etc/slim.conf is the main configuration file, or use the -f
+    option.
+    Options are explained in the file itself.
     
 THEMES
     See THEMES

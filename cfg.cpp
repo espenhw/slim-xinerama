@@ -56,6 +56,7 @@ Cfg::Cfg()
     options.insert(option("sessions","wmaker,blackbox,icewm"));
     options.insert(option("sessiondir",""));
     options.insert(option("hidecursor","false"));
+    options.insert(option("xinerama_screen", "0"));
 
     // Theme stuff
     options.insert(option("input_panel_x","50%"));

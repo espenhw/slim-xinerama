@@ -321,7 +321,29 @@ void App::Run() {
         blankScreen();
     }
 
+    int screenCount;
+    XineramaScreenInfo *screens = XineramaQueryScreens(Dpy, &screenCount);
+    if (screens != NULL) {
+        bool ok;
+        int screen = Cfg::string2int(cfg->getOption("xinerama_screen").c_str(), &ok);
+        if (!ok || screen >= screenCount)
+            screen = 0;
+        screenInfo = (XineramaScreenInfo *)malloc(sizeof(XineramaScreenInfo));
+        if (screenInfo == NULL) {
+            fprintf(stderr, "Can't allocate memory for Xinerama screeninfo.\n");
+            exit(ERR_EXIT);
+        }
+        memcpy(screenInfo, &screens[screen], sizeof(XineramaScreenInfo));
+        XFree(screens);
+    }
+
     HideCursor();
+
+    if (!testing && XineramaIsActive(Dpy)) {
+      Root = XCreateSimpleWindow(Dpy, Root, ScreenLeft(), ScreenTop(), ScreenWidth(), ScreenHeight(), 0, 0, 0);
+      XMapWindow(Dpy, Root);
+      XFlush(Dpy);
+    }
 
     // Create panel
     LoginPanel = new Panel(Dpy, Scr, Root, cfg, themedir);
@@ -714,8 +736,8 @@ void App::Console() {
     int posy = 40;
     int fontx = 9;
     int fonty = 15;
-    int width = (XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)) - (posx * 2)) / fontx;
-    int height = (XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)) - (posy * 2)) / fonty;
+    int width = (ScreenWidth() - (posx * 2)) / fontx;
+    int height = (ScreenHeight() - (posy * 2)) / fonty;
 
     // Execute console
     const char* cmd = cfg->getOption("console_cmd").c_str();
@@ -748,6 +770,8 @@ void App::Exit() {
         RemoveLock();
     }
     delete cfg;
+    if (screenInfo != NULL)
+        free(screenInfo);
     exit(OK_EXIT);
 }
 
@@ -1017,11 +1041,43 @@ void App::blankScreen()
     GC gc = XCreateGC(Dpy, Root, 0, 0);
     XSetForeground(Dpy, gc, BlackPixel(Dpy, Scr));
     XFillRectangle(Dpy, Root, gc, 0, 0,
-                   XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)),
-                   XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+                   XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)),   // intentional
+                   XHeightOfScreen(ScreenOfDisplay(Dpy, Scr))); // intentional
     XFlush(Dpy);
     XFreeGC(Dpy, gc);
 
+}
+
+int App::ScreenLeft()
+{
+    if (screenInfo == NULL)
+        return 0;
+    else
+        return screenInfo->x_org;
+}
+
+int App::ScreenTop()
+{
+    if (screenInfo == NULL)
+        return 0;
+    else
+        return screenInfo->y_org;
+}
+
+int App::ScreenWidth()
+{
+    if (screenInfo == NULL)
+        return XWidthOfScreen(ScreenOfDisplay(Dpy, Scr));
+    else
+        return screenInfo->width;
+}
+
+int App::ScreenHeight()
+{
+    if (screenInfo == NULL)
+        return XHeightOfScreen(ScreenOfDisplay(Dpy, Scr));
+    else
+        return screenInfo->height;
 }
 
 void App::setBackground(const string& themedir) {
@@ -1037,18 +1093,18 @@ void App::setBackground(const string& themedir) {
     if (loaded) {
         string bgstyle = cfg->getOption("background_style");
         if (bgstyle == "stretch") {
-            image->Resize(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+            image->Resize(ScreenWidth(), ScreenHeight());
         } else if (bgstyle == "tile") {
-            image->Tile(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)));
+            image->Tile(ScreenWidth(), ScreenHeight());
         } else if (bgstyle == "center") {
             string hexvalue = cfg->getOption("background_color");
             hexvalue = hexvalue.substr(1,6);
-            image->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+            image->Center(ScreenWidth(), ScreenHeight(),
                         hexvalue.c_str());
         } else { // plain color or error
             string hexvalue = cfg->getOption("background_color");
             hexvalue = hexvalue.substr(1,6);
-            image->Center(XWidthOfScreen(ScreenOfDisplay(Dpy, Scr)), XHeightOfScreen(ScreenOfDisplay(Dpy, Scr)),
+            image->Center(ScreenWidth(), ScreenHeight(),
                         hexvalue.c_str());
         }
         Pixmap p = image->createPixmap(Dpy, Scr, Root);

@@ -7,7 +7,7 @@ CXX=/usr/bin/g++
 CC=/usr/bin/gcc
 CFLAGS=-Wall -I. -I/usr/include/freetype2 -I/usr/include/freetype2/config -I/usr/include/libpng12 -I/usr/include
 CXXFLAGS=$(CFLAGS)
-LDFLAGS=-lXft -lX11 -lfreetype -lXrender -lfontconfig -lpng12 -lz -lm -lcrypt -lXmu -lpng -ljpeg
+LDFLAGS=-lXft -lX11 -lXinerama -lfreetype -lXrender -lfontconfig -lpng12 -lz -lm -lcrypt -lXmu -lpng -ljpeg
 CUSTOM=-DHAVE_SHADOW
 ifdef USE_PAM
 LDFLAGS+= -lpam
