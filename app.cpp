@@ -184,10 +184,12 @@ App::App(int argc, char** argv){
         }
     }
 
+#ifndef XNEST_DEBUG    
     if (getuid() != 0 && !testing) {
         cerr << APPNAME << ": only root can run this program" << endl;
         exit(ERR_EXIT);
     }
+#endif
 
 }
 
